@@ -36,3 +36,4 @@ V0 = exp(-r*T) * EqV;
 
 teachers=bsexact(sigma,r,K,T,s0);
 
+err_d = abs(teachers - V0);

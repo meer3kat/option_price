@@ -1,5 +1,4 @@
-
-function [err,V] = mc_euler(sigma, r, s0, K, gamma, dt, T, n, rsol)
+function [err,V] = mc_euler(sigma, r, s0, K, gamma, np, T, n, rsol)
 % dt = time interval size
 % T = final time 
 % n = time of monte carlo simulation 
@@ -7,10 +6,11 @@ function [err,V] = mc_euler(sigma, r, s0, K, gamma, dt, T, n, rsol)
 % rsol = real analytical solution
 
 S(1) = s0;
+dt = T/np;
 
-range = 0:dt:T;
+range = linspace(0,T,np);
 
-for aa = 1:10 %not necessary
+
     
     for j = 1:n
         S(j) = s0;
@@ -31,11 +31,10 @@ for aa = 1:10 %not necessary
 
     EqV = mean(V);
 
-    V0(aa) = exp(-r*T) * EqV;
+    V0 = exp(-r*T) * EqV;
 
     
-    err_d(aa) = abs(rsol - V0(aa));
-end
-err = mean(err_d);
-V = mean(V0);
+    err = abs(rsol - V0);
+    V=V0;
+
 end

@@ -1,4 +1,3 @@
-
 function [err,V] = mc_euler(sigma, r, s0, K, gamma, dt, T, n, rsol)
 % dt = time interval size
 % T = final time 
@@ -8,9 +7,9 @@ function [err,V] = mc_euler(sigma, r, s0, K, gamma, dt, T, n, rsol)
 
 S(1) = s0;
 
-range = 0:dt:T;
+range = linspace(0,T,
 
-for aa = 1:10
+%for aa = 1:10
     
     for j = 1:n
         S(j) = s0;
@@ -34,7 +33,16 @@ for aa = 1:10
     V0 = exp(-r*T) * EqV;
 
     
-    err_d(aa) = abs(rsol - V0);
-end
-err = mean(err_d);
+    err = abs(rsol - V0);
+    V=V0
+
+
+
+    %V0(aa) = exp(-r*T) * EqV;
+
+    
+    %err_d(aa) = abs(rsol - V0(aa));
+%end
+%err = mean(err_d);
+%V = mean(V0);
 end

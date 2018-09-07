@@ -1,0 +1,119 @@
+%% Assignment 1 - Monte Carlo SImulation to price European Options
+%
+% Written by Peili Guo (peili.guo.7645@student.uu.se) and 
+% Sijia Wang (Sijia.Wang.7090@student.uu.se
+% This report is for Computational Finance: Pricing and Valuation
+% Assignment 1 Group 7. 
+%
+% In this project we implemented Euler's method in Matlab to price a European
+% call option. Different discretization size and number of Monte Carlo
+% simulations were used to experiment the error when gamma = 1, where there
+% is analytical solution for Black-Scholes Model. Antithetic Variates
+% Method were used to reduce the sample error. Finally, a plot of V (option
+% value) were ploted as a function of gamma. 
+
+%% Part 1 - Experiments with error
+clear all;
+close all;
+nrange = [10,100,1000,2000,5000,10000];%number of sample points for MC
+ii = 0;
+sigma = 0.25;
+r = 0.1;
+s0 = 14;
+K = 15;
+gamma = 1;
+np =100;
+T = 0.5;
+rsol = bsexact(sigma,r,K,T,s0);
+
+for nn = nrange
+    ii = ii+1
+    nn
+    [err_s(ii),V(ii)] = mc_euler(sigma, r, s0, K, gamma, np, T, nn, rsol);
+end
+
+%plot
+
+f1 = figure('position', [0, 0, 700, 500]);
+loglog(nrange,err_s,"*-",'MarkerSize',20)
+set(gca, 'FontSize', 15)
+xlabel('Number of sample path','FontSize',15);
+ylabel('Sample error','FontSize',15);
+title('Sample error vs number of simulations (dt = 0.005)', 'FontSize', 18);
+
+
+
+
+dtrange = [10,25,50,100,500,1000]; %number of discretization points
+ii = 0;
+for nn = dtrange
+    ii = ii+1
+    nn
+    [err_d(ii),V(ii)] = mc_euler(sigma, r, s0, K, gamma, nn, T, 10000, rsol);
+end
+
+
+
+
+f2 = figure('position', [0, 0, 700, 500]);
+loglog(T./dtrange, err_d,'*-','MarkerSize',20)
+set(gca, 'FontSize', 15)
+xlabel('time interval size','FontSize',15);
+ylabel('discretization error','FontSize',15);
+title('discretization error vs time interval  (n = 10000)', 'FontSize', 18);
+
+% in this part, we set the discretize size = 0.005 to test the sample error
+% as a function of the number of the sample paths. and set the number of MC
+% runs to 10000 to test the discretization error as a function of the time
+% step. 
+% we can observe in sample error, the larger the sample paths, the smaller
+% the error, until the discretization error is significant in the total
+% error. 
+% In discretization error, when reduce the time interval from 0.05 to
+% 0.001, the error decreases linearly. Euler's method has accuracy of order
+% of 1. 
+
+%% Part 2: use Antithetic variates to improve the results 
+
+
+ii = 0;
+for nn = nrange
+    ii = ii+1
+    nn
+    [err_sa(ii),err_n(ii),V(ii)] = mcan_euler(sigma, r, s0, K, gamma, 100, T, nn, rsol);
+    
+end
+
+
+f3 = figure('position', [0, 0, 700, 500]);
+loglog(nrange,err_n,"*-",'MarkerSize',20)
+hold on
+loglog(nrange,err_sa,"+-",'MarkerSize',20)
+legend("MC simulation", "Antithetic MC")
+set(gca, 'FontSize', 15)
+xlabel('Number of sample path','FontSize',15);
+ylabel('Sample error','FontSize',15);
+title('Sample error vs number of simulations (dt = 0.005)', 'FontSize', 18);
+
+% use anithetic variate method, may improve the accuracy of MC method, but
+% depends on the random number generator of the software. To get a more
+% accurate of the SDE, a better discretization scheme could be used, e.g.
+% Runge Kutta scheme, Milstein Scheme, that give a higher order of
+% accuracy. 
+
+%% Part 3, V of a function of gamma. 
+
+gammarange = 0.5:0.1:1;
+ii = 0;
+for g = gammarange
+    ii = ii+1
+    g
+    [err_s(ii),V(ii)] = mc_euler(sigma, r, s0, K, g, 100, T, 10000, rsol);
+end
+
+f4 = figure('position', [0, 0, 700, 500]);
+plot(gammarange, V)
+set(gca, 'FontSize', 15)
+xlabel('gamma','FontSize',15);
+ylabel('V (option value)','FontSize',15);
+title('gunction of ', 'FontSize', 18);

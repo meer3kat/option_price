@@ -119,7 +119,11 @@ xlabel('gamma','FontSize',15);
 ylabel('V (option value)','FontSize',15);
 title('option value vs gamma', 'FontSize', 18);
 
-% The option value is positive correlated to gamma.
+% The option value is positive correlated to gamma. According to section
+% 7.2.3 in Computational Methods in Finance, gamma is the elasticity of the
+% local volatility function, that could imply that a larger gamma value,
+% the larger volatility, which could in result for a higher value of the
+% option because of the uncertainty related to larger volatility. 
 
 %% function called in script: 
 dbtype('mc_euler.m')
